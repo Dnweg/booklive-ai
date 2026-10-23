@@ -1,0 +1,6 @@
+[
+  {"title":"科技产业观察（演示书目）","author":"演示作者","category":"科技","stock":15,"description":"用于演示的虚构书籍：介绍技术产业的发展与企业案例。","audience":"对科技与商业感兴趣的初学者","keywords":"科技,AI,商业,产业"},
+  {"title":"给孩子的自然探索（演示书目）","author":"演示作者","category":"少儿","stock":9,"description":"用于演示的虚构书籍：围绕自然观察和基础科学展开。","audience":"亲子阅读与小学生","keywords":"儿童,自然,科普,小学"},
+  {"title":"城市经济入门（演示书目）","author":"演示作者","category":"经济","stock":12,"description":"用于演示的虚构书籍：以城市发展为线索讨论经济现象。","audience":"对经济和城市发展好奇的大学生","keywords":"经济,城市,金融,大学生"},
+  {"title":"世界历史故事（演示书目）","author":"演示作者","category":"历史","stock":5,"description":"用于演示的虚构书籍：用故事形式串联历史知识。","audience":"历史爱好者和通识入门读者","keywords":"历史,世界,故事,入门"}
+]
