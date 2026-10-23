@@ -11,7 +11,15 @@ h1 {letter-spacing:-1px;}
 
 # Streamlit Cloud secrets may not be exported as environment variables automatically.
 try:
-    for name in ('OPENAI_API_KEY', 'OPENAI_MODEL', 'BOOKLIVE_ALLOW_EDIT'):
+    
+    for name in (
+        'OPENAI_API_KEY',
+        'OPENAI_MODEL',
+        'BOOKLIVE_BASE_URL',
+        'BOOKLIVE_DEMO_PASSWORD',
+        'BOOKLIVE_ALLOW_EDIT'
+    ):
+
         if name in st.secrets and name not in os.environ:
             os.environ[name] = str(st.secrets[name])
 except (FileNotFoundError, KeyError):
@@ -23,16 +31,53 @@ books=load_books()
 st.title('📚 BookLive · AI 图书直播助手')
 st.caption('V0.2 公开体验原型｜演示图书信息非真实库存｜人工审核后使用，不接入直播平台')
 
+
 with st.sidebar:
     st.header('运行设置')
-    has_key=bool(os.getenv('OPENAI_API_KEY'))
-    mode=st.toggle('启用大模型生成',value=False,disabled=not has_key)
-    if has_key:
-        model=st.text_input('模型名称',value=os.getenv('OPENAI_MODEL','gpt-4.1-mini'))
-        st.caption('调用 API 可能产生费用。密钥仅从环境变量读取。')
+
+    import hmac
+
+    has_key = bool(os.getenv('OPENAI_API_KEY'))
+    access_code = os.getenv(
+        'BOOKLIVE_DEMO_PASSWORD', ''
+    )
+
+    # 必须同时配置 API Key 和访问码
+    if has_key and access_code:
+        entered_code = st.text_input(
+            'AI 体验访问码',
+            type='password',
+            help='请输入管理员提供的体验访问码'
+        )
+
+        authorized = hmac.compare_digest(
+            entered_code,
+            access_code
+        )
     else:
-        model=''
-        st.info('当前为免费离线演示模式。设置 OPENAI_API_KEY 后可启用真实大模型。')
+        authorized = False
+
+    mode = st.toggle(
+        '启用大模型生成',
+        value=False,
+        disabled=not authorized
+    )
+
+    model = os.getenv(
+        'OPENAI_MODEL',
+        'deepseek-chat'
+    )
+
+    if mode:
+        st.success('DeepSeek AI 已启用')
+        st.caption('每次生成可能产生 API 费用。')
+    elif not has_key:
+        st.info('尚未配置 API Key，当前使用离线演示。')
+    elif not access_code:
+        st.warning('尚未配置体验访问码，AI 功能已锁定。')
+    else:
+        st.info('输入正确访问码后，即可启用 AI 生成。')
+
     st.divider()
     st.markdown('**产品边界**')
     st.caption('不自动采集平台评论、不自动发言、不朗读整本书；演示内容须核实。')
